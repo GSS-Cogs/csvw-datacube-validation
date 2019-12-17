@@ -1,0 +1,45 @@
+
+# --------------------
+# Global configuration
+options:
+  local_reference_substitution: true  # NO - SHOULD BE A LIST!
+
+  # list of sources for functions that make us the validation library
+  # there's a build in library to start us off, but you (will...not yet) be able to point to github etc
+  # to extend capability (i.e for non generic use cases).
+  module_sources:
+    - /library  # default/built-in
+
+
+# ------------------------------
+# Defining Validation Steps:
+checking_rounds:
+
+  basic_structure_linting:
+      description: a wrapper around csvlint that just runs csvlinting validation against csvw's relevant to this job
+      stop_on_fail: true
+      steps:
+        - csvlint
+
+  resources_are_accessible:
+      description: check that our required soures are valid before we commence more detailed checks
+      stop_on_fail: true
+      steps:
+        - all_http_field_responses_match:
+            status_codes: 200
+        - all_referenced_json_documents_load:
+            follow_children: true
+        - all_referenced_csv_files_load:
+            follow_children: true
+
+  confirm_implied_resouces_are accessible:
+      description: check that implied resouces (columns.csv, components.csv) are valid
+      stop_on_fail: true
+      steps:
+        - assert_cogs_implied_resources
+
+  cross_resource_relationships_are_intact:
+      description: check the where fields in disperate resources need to match, they do
+      stop_on_fail: true
+      steps:
+        - confirm_schema_columns_name_match_obs_file_columns
