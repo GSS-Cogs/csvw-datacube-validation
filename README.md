@@ -15,4 +15,4 @@ The choice of functions to run are defined within libraries, which as listed at 
 
 The thought is that everything breaks down to tiny function all taking a signatues of (validatorObject, schema, kwargs), any functions that meets that signature can be included in the inventory and called by the validiator. Beyond that everything else is just wrapper.
 
-So it _should_ be a highly extensible tool and easily adaptable to (a) other organisations and (b) changes in our own requirments.
+So it _should_ be a highly extensible tool and easily adaptable to (a) other organisations and (b) changes in our own requirements.
