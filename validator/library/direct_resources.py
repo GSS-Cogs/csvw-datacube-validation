@@ -26,7 +26,7 @@ def all_http_field_responses_match(validator, schema, **kwargs):
         if is_json_url(field_value):
             r = requests.get(field_value)
             if r.status_code not in status_codes_list:
-                validator.results.add_result(field_value, "testing response from json url matches expected",
+                validator.results.add_result("bad response for {}.".format(field_value),
                             {"status_code_recieved": r.status_code, "codes_allowed": status_codes_list})
 
 
@@ -41,12 +41,12 @@ def all_referenced_json_documents_load(validator, schema, **kwargs):
 
     for json_link in all_json_links:
         try:
-            child_schema = get_json_as_dict(json_link, "get json for function 'all_referenced_json_documents_load'.")
+            child_schema = get_json_as_dict(json_link, "get json for '{}',".format(json_link))
             if follow_children:
                 all_referenced_json_documents_load(validator, child_schema, **kwargs)
 
         except Exception as e:
-            validator.results.add_result(json_link, "testing json resources are loadable", exception_as_string(e))
+            validator.results.add_result("exception encountered for '{}'".format(json_link), exception_as_string(e))
 
 
 

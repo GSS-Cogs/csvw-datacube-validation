@@ -16,7 +16,7 @@ options:
 checking_rounds:
 
   basic_structure_linting:
-      description: a wrapper around csvlint that just runs csvlinting validation against csvw's relevant to this job
+      description: run basic csvlint validation relevant to this dataset
       stop_on_fail: true
       steps:
         - csvlint
@@ -32,14 +32,15 @@ checking_rounds:
         - all_referenced_csv_files_load:
             follow_children: true
 
-  confirm_implied_resouces_are accessible:
-      description: check that implied resouces (columns.csv, components.csv) are valid
+  confirm_csv_resources_exist:
+      description: make sure we the fields we are specifiying exist in the columns.csvs referenced
       stop_on_fail: true
       steps:
-        - assert_cogs_implied_resources
+        - assert_all_required_columns_csv_fields_exist
 
-  cross_resource_relationships_are_intact:
-      description: check the where fields in disperate resources need to match, they do
+  confirm_resource_integrity:
+      description: where we're making use of fields within resources as csv, confirm the entries are correctly formatted
       stop_on_fail: true
       steps:
-        - confirm_schema_columns_name_match_obs_file_columns
+        - assert_columns_csv_resources_are_correct
+

@@ -64,7 +64,6 @@ def get_json_from_http(url, intent):
     """
     r = requests.get(url)
 
-
     if r.status_code != 200:
         raise Exception("While '{}'. Failed to get expected json from endpoint '{}' with status"
                         "code '{}'.".format(intent, url, r.status_code))

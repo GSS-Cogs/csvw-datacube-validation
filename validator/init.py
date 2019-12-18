@@ -37,8 +37,6 @@ class Init:
         # Run the tests
         self.do()
 
-        # Get the results
-        self.show_results()
 
     def do(self):
 
@@ -47,22 +45,23 @@ class Init:
 
             try:
                 result = dcv.validate()
+
+                # These should probably be seperate things
                 self.result_set.append(result)
+
             except Exception as e:
                 raise Exception("Error encountered while attempting to validate datacube '{}'."
                                 .format(datacube)) from e
 
-    def show_results(self):
-
-        for result in self.result_set:
-            # TODO - just blurting to screen for now, something snazzy would be better
-            result.simple_print_results()
 
 
 if __name__ == "__main__":
 
-    # TODO - we're just hard coding one for now to develop against
+    # TODO - we're just hard coding some for now to develop against
     schemas = [
-        "https://ci.floop.org.uk/job/GSS_data/job/Housing/job/WG-Chargeable-homes/lastSuccessfulBuild/artifact/out/observations.csv-schema.json"
+        "https://ci.floop.org.uk/job/GSS_data/job/Housing/job/WG-Chargeable-homes/lastSuccessfulBuild/artifact/out/observations.csv-schema.json",
+        "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/NHS-guardianship-mental-health-act/27/artifact/datasets/NHS-guardianship-mental-health-act/out/cases-of-guardianship-under-the-mental-health-act-1983-by-gender-section-and-relationship-of-guardian.csv-schema.json",
+        "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/lastSuccessfulBuild/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2015-419-geog.csv-schema.json",
+        "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/DfE-special-educational-needs/lastSuccessfulBuild/artifact/datasets/DfE-special-educational-needs/out/observations.csv-schema.json"
     ]
     Init(schemas)

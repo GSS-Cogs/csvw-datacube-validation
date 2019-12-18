@@ -1,7 +1,11 @@
 
 from box import Box, BoxList
+import datetime
+
+from colorama import Fore, Style
 
 from results import Results
+from constants import LINE_BREAK
 from library.helpers.json import get_json_as_dict
 from library.helpers.exceptions import ConfigurationError
 from library.helpers.observation_file import get_obs_path_from_schema
@@ -20,14 +24,18 @@ class DataCubeValidator():
 
     def validate(self):
 
+        print(Fore.GREEN + LINE_BREAK)
+        print("for: ", self.schema_path)
+        print("--- doing ---", Style.RESET_ALL)
+
         # What checks we run and under what heading is defined by the config
-        for name, function_dict in self.config.checking_rounds.items():
+        for group_name, function_dict in self.config.checking_rounds.items():
 
             for step in function_dict.steps:
 
+
                 # TODO - if the result object has populated and stop_on_fail == True
                 # we need to skip further rounds of validation
-
 
 
                 # If the step has keyword arguments, get them
@@ -59,6 +67,17 @@ class DataCubeValidator():
                     raise ConfigurationError("Config steps can only be dictionary items or strings"
                                              ", the step '{}' is a '{}'.".format(step, str(type(step))))
 
+                self.results.checking = name
                 self.function_map[name](self, self.schema, **step_kwargs)
+                self.results.checking = None
+
+            if name not in self.results.results.keys():
+                print(Fore.GREEN+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), function_dict.description)
+            else:
+                print(Fore.RED+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), function_dict.description)
+                print(self.results.results[name])
+
+        # Reset fancy green font
+        print(Style.RESET_ALL)
 
         return self.results
