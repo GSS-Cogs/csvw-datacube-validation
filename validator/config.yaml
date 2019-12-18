@@ -22,7 +22,7 @@ checking_rounds:
         - csvlint
 
   resources_are_accessible:
-      description: check that our required soures are valid before we commence more detailed checks
+      description: check that our required sources are valid before we commence more detailed checks
       stop_on_fail: true
       steps:
         - all_http_field_responses_match:
@@ -33,13 +33,13 @@ checking_rounds:
             follow_children: true
 
   confirm_csv_resources_exist:
-      description: make sure we the fields we are specifiying exist in the columns.csvs referenced
+      description: make sure the fields we are specifiying exist in the columns.csvs referenced
       stop_on_fail: true
       steps:
         - assert_all_required_columns_csv_fields_exist
 
   confirm_resource_integrity:
-      description: where we're making use of fields within resources as csv, confirm the entries are correctly formatted
+      description: where we're making use of fields within columns.csv's, confirm the entries are correctly formatted
       stop_on_fail: true
       steps:
         - assert_columns_csv_resources_are_correct
