@@ -72,8 +72,8 @@ def assert_columns_csv_resources_are_correct(validator, schema, **kwargs):
 
     column_dfs = get_column_dataframes_relevent_to_an_observation_file(schema)
 
-    snake_pattern = re.compile("")
-    kebad_pattern = re.compile("")
+    snake_pattern = re.compile("^[a-z_].*$")
+    kebab_pattern = re.compile("^[a-z-].*$")
 
     for df in column_dfs:
 
@@ -83,34 +83,24 @@ def assert_columns_csv_resources_are_correct(validator, schema, **kwargs):
             if str(row["property_template"]).startswith(our_dim_prefix):
 
                 # Last values in property_template url
-                value_should_be_kebbabed = entry(row, "property_template", -1)
-                if not kebad_pattern.match(value_should_be_kebbabed):
+                val = entry(row, "property_template", -1)
+                if not kebab_pattern.match(val):
                     validator.results.add_result(
-                        "value '{}' is incorrect for property_template".format(value_should_be_kebbabed),
+                        "value '{}' is incorrect for property_template".format(val),
                         {"expected (example)": "http://gss-data.org.uk/def/dimension/residential-status"})
 
             if str(row["value_template"]).startswith(our_concept_prefix):
 
                 # Second to last value in value_template url
-                value_should_be_kebbabed = entry(row, "value_template", -2)
-                if not kebad_pattern.match(value_should_be_kebbabed):
+                val = entry(row, "value_template", -2)
+                if not kebab_pattern.match(val):
                     validator.results.add_result(
-                        "value '{}' is incorrect for value_template".format(value_should_be_kebbabed),
+                        "value '{}' is incorrect for value_template".format(val),
                         {"expected (example)": "http://gss-data.org.uk/def/concept/residential-status/{residential_status}"})
 
                 # Last value in value_template url
-                value_should_be_kebbabed = entry(row, "value_template", -1)[1:-1]
-                if not snake_pattern.match(value_should_be_kebbabed):
+                    val = entry(row, "value_template", -1)[1:-1]
+                if not snake_pattern.match(val):
                     validator.results.add_result(
-                        "value '{}' is incorrect for value_template".format(value_should_be_kebbabed),
+                        "value '{}' is incorrect for value_template".format(val),
                         {"expected (example)": "http://gss-data.org.uk/def/concept/residential-status/{residential_status}"})
-
-
-
-
-
-
-
-
-
-
