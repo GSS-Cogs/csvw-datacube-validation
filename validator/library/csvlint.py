@@ -11,13 +11,12 @@ def csvlint(validator, schema, **kwargs):
     :return: results
     """
 
-
     pwd = os.getcwd()
     try:
-        base = "docker run -v {}:/workspace -w /workspace gsscogs/csvlint csvlint -s ".format(pwd)
-    except:
-        # We may be running inside a ruby container already
         base = "csvlint -s"
+    except:
+        # In case we're not running in the container
+        base = "docker run -v {}:/workspace -w /workspace gsscogs/csvlint csvlint -s ".format(pwd)
 
     whole_command = base + validator.schema_path
 
