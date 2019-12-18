@@ -11,17 +11,15 @@ def csvlint(validator, schema, **kwargs):
     :return: results
     """
 
-    pwd = os.getcwd()
+    # A catch so we can run in or out of the container
     try:
-        base = "csvlint -s"
-    except:
-        # In case we're not running in the container
-        base = "docker run -v {}:/workspace -w /workspace gsscogs/csvlint csvlint -s ".format(pwd)
+        whole_command = "csvlint -s" + validator.schema_path
+        proc = subprocess.Popen(whole_command.split(" "), stdout=subprocess.PIPE)
+    except FileNotFoundError:
+        pwd = os.getcwd()
+        whole_command = "docker run -v {}:/workspace -w /workspace gsscogs/csvlint csvlint -s ".format(pwd)  + validator.schema_path
+        proc = subprocess.Popen(whole_command.split(" "), stdout=subprocess.PIPE)
 
-    whole_command = base + validator.schema_path
-
-    # TODO - do we wrap csvlint or rerun it?
-    proc = subprocess.Popen(whole_command.split(" "), stdout=subprocess.PIPE)
     while True:
         line = proc.stdout.readline()
         if not line:
