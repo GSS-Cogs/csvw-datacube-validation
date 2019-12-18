@@ -4,6 +4,12 @@ _note - initial stab, very much a work in progress._
 
 A extensible framework for validating multi dimensional datasets as defined by a csvw schema.
 
+### Usage
+
+for now .... `python3 validator/init.py`  (haven't done requirements yet, so you may need to pip install things)
+
+This will run the valdator against the schema urls currently hard coded into `validator/init.py` using the default config
+in `validator/config.yaml`.
 
 ### The gist
 
