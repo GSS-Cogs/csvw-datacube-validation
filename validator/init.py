@@ -58,7 +58,16 @@ class Init:
 
 if __name__ == "__main__":
 
-    # TODO - a proper argparser and ability to pass in a directory and get all schemas
+    # TODO - a real argparser and ability to pass in a directory full
     schema_url = [sys.argv[1]]
     Init(schema_url)
+
+    """
+    Some urls for developing against
+    
+    "https://ci.floop.org.uk/job/GSS_data/job/Housing/job/WG-Chargeable-homes/lastSuccessfulBuild/artifact/out/observations.csv-schema.json",
+    "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/NHS-guardianship-mental-health-act/27/artifact/datasets/NHS-guardianship-mental-health-act/out/cases-of-guardianship-under-the-mental-health-act-1983-by-gender-section-and-relationship-of-guardian.csv-schema.json",
+    "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/lastSuccessfulBuild/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2015-419-geog.csv-schema.json",
+    "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/DfE-special-educational-needs/lastSuccessfulBuild/artifact/datasets/DfE-special-educational-needs/out/observations.csv-schema.json"
+    """
 
