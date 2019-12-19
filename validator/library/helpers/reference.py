@@ -1,12 +1,13 @@
 
-from library.helpers.json import all_dict_values
+from library.helpers.generic import all_dict_values
 
-def get_cogs_implied_resources(schema):
+def get_cogs_implied_resources(schema, local_ref):
     """
     A very cogs specific function. Given a csvw resource, what unspecified csv
     resources can we indfer
 
-    :param schema:
+    :param schema:   dict of schmea
+    "param localiser:  substitutions dict for localising references
     :return: list of csv and json links
     """
 
@@ -49,8 +50,23 @@ def get_cogs_implied_resources(schema):
                 resource_path = "https://gss-cogs.github.io/" + ref_repo + "/reference/" + expected_item
                 implied_resources.append(resource_path)
 
-
     # Get rid of all duplicates
     unique_implied_resources = list(set(implied_resources))
 
-    return unique_implied_resources
+    # Where we are using local reference sources, substitute paths appropriately
+    if local_ref == {}:
+        final_reference_list = unique_implied_resources
+    else:
+        final_reference_list = []
+        for resource in unique_implied_resources:
+            for k, v in local_ref.items():
+                found = False
+                if k in resource:
+                    localised_resource = v+resource.split(k)[1]
+                    final_reference_list.append(localised_resource)
+                    found = True
+                    break
+            if not found:
+                final_reference_list.append(resource)
+
+    return final_reference_list

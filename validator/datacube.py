@@ -3,6 +3,7 @@ from box import Box, BoxList
 import datetime
 
 from colorama import Fore, Style
+from texttable import Texttable
 
 from results import Results
 from constants import LINE_BREAK
@@ -14,8 +15,8 @@ class DataCubeValidator():
     """Controls validation for a single datacube as defined by a single *-schema.json file."""
 
     def __init__(self, path_or_url, config, function_map, local_ref):
-        self.config = config
         self.local_ref = local_ref
+        self.config = config
         self.results = Results(path_or_url)
         self.schema_path = path_or_url
         self.schema = get_json_as_dict(path_or_url, "loading initial schema for datacube")
@@ -28,15 +29,14 @@ class DataCubeValidator():
         print("for: ", self.schema_path)
         print("--- doing ---", Style.RESET_ALL)
 
-        # What checks we run and under what heading is defined by the config
-        for group_name, function_dict in self.config.checking_rounds.items():
 
-            for step in function_dict.steps:
+        # Run through the stages as defined by the execution order
+        # TODO - better, this is kinda nasty
+        execution_order = set([v["execution_order"] for k,v in self.config.stages.items()])
+        for eo in execution_order:
+            stage_dict = [v for k,v in self.config.stages.items() if v["execution_order"] == eo][0]
 
-
-                # TODO - if the result object has populated and stop_on_fail == True
-                # we need to skip further rounds of validation
-
+            for step in stage_dict.steps:
 
                 # If the step has keyword arguments, get them
 
@@ -71,11 +71,29 @@ class DataCubeValidator():
                 self.function_map[name](self, self.schema, **step_kwargs)
                 self.results.checking = None
 
+            # TODO printing based on results. This should be pulled out
             if name not in self.results.results.keys():
-                print(Fore.GREEN+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), function_dict.description)
+                print(Fore.GREEN+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), stage_dict.description)
             else:
-                print(Fore.RED+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), function_dict.description)
-                print(self.results.results[name])
+                print(Fore.RED+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), stage_dict.description)
+
+                # TODO - this should be its own function
+                # also, we might not want to print like this, or print at all
+                for problem, details in self.results.results[name].items():
+
+                    # Use a fancy text table for readibility
+                    table = [["problem ==> ", problem]]
+                    for k, v in details.items():
+                        table.append([k, v])
+
+                    t = Texttable()
+                    t.add_rows(table)
+                    print(t.draw())
+                    print("")
+
+                # If stop on fail, stop looping through stages for this schema
+                if stage_dict.stop_on_fail:
+                    break
 
         # Reset fancy green font
         print(Style.RESET_ALL)

@@ -8,7 +8,7 @@ from library.helpers.json import get_json_as_dict
 
 def assert_cogs_implied_resources(validator, schema, **kwargs):
 
-    implied_resources = get_cogs_implied_resources(schema)
+    implied_resources = get_cogs_implied_resources(schema, validator.local_ref)
 
     for resource in implied_resources:
         if resource.endswith(".csv"):
@@ -40,8 +40,10 @@ def assert_all_required_columns_csv_fields_exist(validator, schema, **kwargs):
     If matches the name field within one of the columns.csv files within a ref_* repo
     that is referenced from the schema.
     """
-    columns_paths = [x for x in get_cogs_implied_resources(schema) if x.endswith("columns.csv")]
-    column_dfs = get_column_dataframes_relevent_to_an_observation_file(schema)
+
+    # TODO - three seperate calls can't be right
+    columns_paths = [x for x in get_cogs_implied_resources(schema, validator.local_ref) if x.endswith("columns.csv")]
+    column_dfs = get_column_dataframes_relevent_to_an_observation_file(schema, validator.local_ref)
     column_names_found = get_column_underscored_names_for_obs_file(schema)
 
     for column in column_names_found:
@@ -54,6 +56,7 @@ def assert_all_required_columns_csv_fields_exist(validator, schema, **kwargs):
         if not found:
             validator.results.add_result("column with name field '{}' does not exist in columns.csv's".format(column),
                             {"column_csvs_found_for_this_schema": columns_paths})
+
 
 
 def assert_columns_csv_resources_are_correct(validator, schema, **kwargs):
@@ -70,37 +73,42 @@ def assert_columns_csv_resources_are_correct(validator, schema, **kwargs):
         return row[column].split("/")[index]
 
 
-    column_dfs = get_column_dataframes_relevent_to_an_observation_file(schema)
+    column_dfs = get_column_dataframes_relevent_to_an_observation_file(schema, validator.local_ref)
 
-    snake_pattern = re.compile("^[a-z_].*$")
-    kebab_pattern = re.compile("^[a-z-].*$")
+    snake_pattern = re.compile("^[a-z0-9_]*$")
+    kebab_pattern = re.compile("^[a-z0-9-]*$")
 
     for df in column_dfs:
 
         for i, row in df.iterrows():
 
-
             if str(row["property_template"]).startswith(our_dim_prefix):
 
                 # Last values in property_template url
                 val = entry(row, "property_template", -1)
-                if not kebab_pattern.match(val):
+                match = kebab_pattern.match(val)
+                if not match:
                     validator.results.add_result(
-                        "value '{}' is incorrect for property_template".format(val),
-                        {"expected (example)": "http://gss-data.org.uk/def/dimension/residential-status"})
+                        "The value '{}' is incorrect for column 'property_template'".format(val),
+                        {"expected (example)": "http://gss-data.org.uk/def/dimension/styled-like-this",
+                         "got": row["property_template"], "problem_field": val})
 
             if str(row["value_template"]).startswith(our_concept_prefix):
 
                 # Second to last value in value_template url
                 val = entry(row, "value_template", -2)
-                if not kebab_pattern.match(val):
+                match = kebab_pattern.match(val)
+                if not match:
                     validator.results.add_result(
-                        "value '{}' is incorrect for value_template".format(val),
-                        {"expected (example)": "http://gss-data.org.uk/def/concept/residential-status/{residential_status}"})
+                        "The value '{}' is incorrect for column 'value_template'".format(val),
+                        {"expected (example)": "http://gss-data.org.uk/def/concept/styled-like-this/{styled_like_this}",
+                         "got": row["value_template"], "problem_field": val})
 
                 # Last value in value_template url
-                    val = entry(row, "value_template", -1)[1:-1]
-                if not snake_pattern.match(val):
+                val = entry(row, "value_template", -1)
+                match = snake_pattern.match(val[1:-1])
+                if not match:
                     validator.results.add_result(
-                        "value '{}' is incorrect for value_template".format(val),
-                        {"expected (example)": "http://gss-data.org.uk/def/concept/residential-status/{residential_status}"})
+                        "The value '{}' is incorrect for column 'value_template'".format(val),
+                        {"expected (example)": "http://gss-data.org.uk/def/concept/styled-like-this/{styled_like_this}",
+                         "got": row["value_template"], "problem_field": val})

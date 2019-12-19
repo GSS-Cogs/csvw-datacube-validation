@@ -2,7 +2,7 @@
 import requests
 import json
 
-from library.helpers.generic import is_url
+from library.helpers.generic import is_url, all_dict_values
 
 def is_json_url(field_value):
 
@@ -72,17 +72,3 @@ def get_json_from_http(url, intent):
     except Exception as e:
         raise Exception("While '{}' we were unable to convert the response from '{}' from json to dict"
                         .format(intent, url)) from e
-
-
-def all_dict_values(input):
-    """Helper function to get all field values within a dictionary"""
-    output = []
-    if type(input) == dict:
-        for _, v in input.items():
-            output += all_dict_values(v)
-    elif type(input) == list:
-        for v in input:
-            output += all_dict_values(v)
-    else:
-        output.append(input)
-    return output

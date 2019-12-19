@@ -2,7 +2,6 @@
 # --------------------
 # Global configuration
 options:
-  local_reference_substitution: true  # NO - SHOULD BE A LIST!
 
   # list of sources for functions that make us the validation library
   # there's a build in library to start us off, but you (will...not yet) be able to point to github etc
@@ -12,17 +11,19 @@ options:
 
 
 # ------------------------------
-# Defining Validation Steps:
-checking_rounds:
+# Defining Stages of validation:
+stages:
 
   basic_structure_linting:
+      execution_order: 1
       description: run basic csvlint validation relevant to this dataset
       stop_on_fail: true
       steps:
         - csvlint
 
   resources_are_accessible:
-      description: check that our required sources are valid before we commence more detailed checks
+      execution_order: 2
+      description: check that our required csv and json sources can be accessed before we commence more detailed checks
       stop_on_fail: true
       steps:
         - all_http_field_responses_match:
@@ -33,12 +34,14 @@ checking_rounds:
             follow_children: true
 
   confirm_csv_resources_exist:
+      execution_order: 3
       description: make sure the fields we are specifiying exist in the columns.csvs referenced
       stop_on_fail: true
       steps:
         - assert_all_required_columns_csv_fields_exist
 
   confirm_resource_integrity:
+      execution_order: 4
       description: where we're making use of fields within columns.csv's, confirm the entries are correctly formatted
       stop_on_fail: true
       steps:

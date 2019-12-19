@@ -26,7 +26,7 @@ def get_column_underscored_names_for_obs_file(schema):
     return [x["name"] for x in obs_table["tableSchema"]["columns"]]
 
 
-def get_column_dataframes_relevent_to_an_observation_file(schema):
+def get_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
     """
     Get dataframes  for all columns.csv files relevent to a give file we're trying to
     load. Filter to just the fields that matter to the task in hand, then return
@@ -37,7 +37,7 @@ def get_column_dataframes_relevent_to_an_observation_file(schema):
 
     fields_required = get_column_underscored_names_for_obs_file(schema)
 
-    paths_to_columns_csvs = [x for x in get_cogs_implied_resources(schema) if x.endswith("columns.csv")]
+    paths_to_columns_csvs = [x for x in get_cogs_implied_resources(schema, local_ref) if x.endswith("columns.csv")]
 
     initial_data_frames = []
     for csv_path in paths_to_columns_csvs:

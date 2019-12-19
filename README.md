@@ -4,21 +4,48 @@ _note - initial stab, very much a work in progress._
 
 A extensible framework for validating multi dimensional datasets as defined by a csvw schema.
 
+### Install
+
+Two options, I would personally use docker, but I've included both as the second it easier for development.
+
+With docker:
+- At the terminal `open ~/.bashrc` and add an alias `alias validate="docker run gsscogs/csvw-datacube-validation:latest /bin/bash /run.sh`
+
+
+To install locally:
+-  `git clone https://github.com/GSS-Cogs/csvw-datacube-validation`
+- cd in, then `pip3 install -r requirments.txt`
+
+
 ### Usage
 
-for now .... `python3 validator/init.py`  (haven't done requirements yet, so you may need to pip install things)
+The start point is **always** a csvw schema file represenenting a single dataset. So for COGS a json file ending `csv-schema.json`.
 
-This will run the valdator against the schema urls currently hard coded into `validator/init.py` using the default config
-in `validator/config.yaml`.
+1.) Via Docker
+- `validate <path-to-schema>`
 
-### The gist
+2.) With a direct python install
+- `python3 /path-to-the-repo/init.py <path-to-schema>`  
+  
+Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json"
 
-We start with a csvw file representing a dataset.
 
-The validation that runs (the selection of functions to run, gathered in what groups, options etc) are defined within ./validator/config.yaml.
+### Setup Local References
 
-The choice of functions to run are defined within libraries, which as listed at the top of ./validator/config.yaml (there's a default /library I'm using for now). The idea being if you have a non standard use case - pass it some functions for it, and call them in your config.yaml.
+Validating things after they're gotten online is always going to be limited. You can choose to check your local version
+of reference material (i.e columns.csv, components.csv) instead (there's a flag) but first we need to let the app know where those files are.
 
-The thought is that everything breaks down to tiny function all taking a signatues of (validatorObject, schema, kwargs), any functions that meets that signature can be included in the inventory and called by the validiator. Beyond that everything else is just wrapper.
+A few stages to set this up.
 
-So it _should_ be a highly extensible tool and easily adaptable to (a) other organisations and (b) changes in our own requirements.
+1.) Find somewhere convenient and create a yaml file (I use `substitutes.yaml` but the name doesnt matter).
+
+2.) Map your references in it as per the below example:
+
+```
+/family-disability/: /Users/adamsm/go/src/github.com/GSS-Cogs/family-disability/
+/ref_common/: /Users/adamsm/go/src/github.com/GSS-Cogs/ref_common/
+```
+*explanation - that's telling the app that when I want to use locally held reference data and
+`/family-disability/` is in the path, go to `/Users/adamsm/go/src/github.com/GSS-Cogs/family-disability/` instead.*
+
+To run in local reference mode include the `-r` flag when you run the app and point to where you saved your yaml file, i.e `validate -r /path-to/substitutes.yaml <path-to-schema>`.
