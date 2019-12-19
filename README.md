@@ -6,10 +6,10 @@ A extensible framework for validating multi dimensional datasets as defined by a
 
 ### Install
 
-Two options, I would personally use docker, but I've included both as the second it easier for development.
+Two options, I would personally use docker, but I've included both as the second is easier for development.
 
 With docker:
-- At the terminal `open ~/.bashrc` and add an alias `alias validate="docker run gsscogs/csvw-datacube-validation:latest /bin/bash /run.sh`
+- At the terminal `open ~/.bashrc` and add an alias `alias validate="docker run gsscogs/csvw-datacube-validation:latest /bin/bash /run.sh"`
 
 
 To install locally:
