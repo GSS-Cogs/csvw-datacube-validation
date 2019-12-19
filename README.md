@@ -27,7 +27,7 @@ The start point is **always** a csvw schema file represenenting a single dataset
 2.) With a direct python install
 - `python3 /path-to-the-repo/init.py <path-to-schema>`  
   
-Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json", but to validate using local reference sources you need a little more setup (see below).
+Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json", but can only be a locally held schema if you've set up local reference sources (see below).
 
 
 ### Setup Local References
