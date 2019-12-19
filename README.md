@@ -6,12 +6,6 @@ A extensible framework for validating multi dimensional datasets as defined by a
 
 ### Install
 
-Two options, I would personally use docker, but I've included both as the second is easier for development.
-
-With docker:
-- At the terminal `open ~/.bashrc` and add an alias `alias validate="docker run gsscogs/csvw-datacube-validation:latest /bin/bash /run.sh"`
-
-
 To install locally:
 -  `git clone https://github.com/GSS-Cogs/csvw-datacube-validation`
 - cd in, then `pip3 install -r requirments.txt`
@@ -21,11 +15,10 @@ To install locally:
 
 The start point is **always** a csvw schema file represenenting a single dataset. So for COGS a json file ending `csv-schema.json`.
 
-1.) Via Docker
-- `validate <path-to-schema>`
+Run python directly
+`python3 <wherever-you-cloned-it>/csvw-datacube-validation/validator/init.py <path-to-schema>`
 
-2.) With a direct python install
-- `python3 /path-to-the-repo/init.py <path-to-schema>`  
+For now I'd create an alias, eg `alias validate="python3 <wherever-you-cloned-it>/csvw-datacube-validation/validator/init.py` so you can use via `validate <path-to-schema>`.
   
 Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json", but can only be a locally held schema if you've set up local reference sources (see below).
 
