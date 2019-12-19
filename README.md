@@ -8,7 +8,7 @@ A extensible framework for validating multi dimensional datasets as defined by a
 
 To install locally:
 -  `git clone https://github.com/GSS-Cogs/csvw-datacube-validation`
-- cd in, then `pip3 install -r requirments.txt`
+- cd in, then `pip install -r requirements.txt`
 
 
 ### Usage
