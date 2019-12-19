@@ -15,10 +15,10 @@ To install locally:
 
 The start point is **always** a csvw schema file represenenting a single dataset. So for COGS a json file ending `csv-schema.json`.
 
-Run python directly
+For now we need to run the python script directly
 `python3 <wherever-you-cloned-it>/csvw-datacube-validation/validator/init.py <path-to-schema>`
 
-For now I'd create an alia by adding `alias validate="python3 <PATH TO WHERE YOU CLONES IT>/csvw-datacube-validation/validator/init.py` to your `./bashrc` so you can use via `validate <path-to-schema>`.
+For convenience it's probably worth creating an alias by adding `alias validate="python3 <PATH TO WHERE YOU CLONES IT>/csvw-datacube-validation/validator/init.py` to your `./bashrc` so you can use via `validate <path-to-schema>`.
   
 Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json", but can only be a locally held schema if you've set up local reference sources (see below).
 
