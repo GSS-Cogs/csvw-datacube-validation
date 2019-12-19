@@ -1,6 +1,7 @@
 
 import os
 import sys
+import argparse
 
 from datacube import DataCubeValidator
 from library.helpers.config import get_function_map_from_config
@@ -58,9 +59,13 @@ class Init:
 
 if __name__ == "__main__":
 
-    # TODO - a real argparser and ability to pass in a directory full
-    schema_url = [sys.argv[1]]
-    Init(schema_url)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path_or_url", help="a single path or url")
+    args = parser.parse_args()
+
+    # TODO - for now we're just listifying a single path/url
+    # what we want is to .walk() where it's a diretory path and pass through a list
+    Init([args.path_or_url])
 
     """
     Some urls for developing against

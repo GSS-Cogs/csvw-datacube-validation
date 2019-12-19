@@ -43,4 +43,3 @@ checking_rounds:
       stop_on_fail: true
       steps:
         - assert_columns_csv_resources_are_correct
-
