@@ -130,7 +130,7 @@ def assert_codelist_csv_resources_are_correctly_formatted(validator, schema, **k
                 else:
                     # If we do, make sure there's an order to them
                     order = set(int_sort_fields)
-                    for i in range(0, len(order)):
+                    for i in range(1, len(order)+1):
                         if i not in int_sort_fields:
                             validator.results.add_result("The sort priority field in '{}' is malformed."
                                                          " If we are using Sort Priority, the integers"
