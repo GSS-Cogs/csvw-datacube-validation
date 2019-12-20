@@ -166,7 +166,6 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
                 # Last values in property_template url
                 val = entry(row, "property_template", -1)
                 match = kebab_pattern.match(val)
-                print(val, match)
                 if match == None:
                     validator.results.add_result(
                         "The value '{}' is incorrect for column 'property_template'".format(val),
