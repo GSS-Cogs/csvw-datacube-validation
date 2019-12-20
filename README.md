@@ -4,6 +4,15 @@ _note - initial stab, very much a work in progress._
 
 A extensible framework for validating multi dimensional datasets as defined by a csvw schema.
 
+### What it does
+
+You use a config file (see https://github.com/GSS-Cogs/csvw-datacube-validation/blob/master/validator/config.yaml) to define what you're validating in terms of stages made up of "steps".
+
+The "steps" are made up of functions, as defined here https://github.com/GSS-Cogs/csvw-datacube-validation/tree/master/validator/library
+
+The app takes care of the task running, reporting etc and provides generic functions for accessing the various reference and data resources are defined (or implied) by the csvw schema file.
+
+
 ### Install
 
 To install locally:
@@ -20,7 +29,7 @@ For now we need to run the python script directly
 
 For convenience it's probably worth creating an alias by adding `alias validate="python3 <PATH TO WHERE YOU CLONES IT>/csvw-datacube-validation/validator/init.py` to your `./bashrc` so you can use via `validate <path-to-schema>`.
   
-Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json", but can only be a locally held schema if you've set up local reference sources (see below).
+Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json", and you can use locally held scheama files - but - if you want to validate against your locally held reference data (eg `/ref_common` or `/family-disabily/reference/`) you'll need to set up local reference sources (see below).
 
 
 ### Setup Local References
