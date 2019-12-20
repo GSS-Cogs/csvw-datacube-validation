@@ -1,11 +1,10 @@
 
 import os
-import argparse
 
-from datasetvalidator import DatasetValidator
-from library.helpers.config import get_function_map_from_config
-from library.helpers.yaml import confirm_valid_config, load_yaml
-from library.helpers.exceptions import ConfigurationError
+from .datasetvalidator import DatasetValidator
+from .library.helpers.config import get_function_map_from_config
+from .library.helpers.yaml import confirm_valid_config, load_yaml
+from .library.helpers.exceptions import ConfigurationError
 
 class Initialise:
     """
@@ -61,22 +60,3 @@ class Initialise:
             except Exception as e:
                 raise Exception("Error encountered while attempting to validate datacube '{}'."
                                 .format(job)) from e
-
-
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("path_or_url", help="a single path or url")
-    parser.add_argument("-r", "--reference", nargs='?', default=None)
-    args = parser.parse_args()
-
-    # TODO - for now we're just listifying a single path/url
-    # what we want is to .walk() where it's a directory path and pass through a list
-
-    validation = Initialise([args.path_or_url], args.reference)
-    validation.create_jobs()
-    validation.run_jobs()
-
-    # TODO at this point we have all the results stored in self.result_set....do we want to anything with them?
-
-

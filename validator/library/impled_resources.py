@@ -1,10 +1,10 @@
 
 import re
 
-from library.helpers.reference import get_cogs_implied_resources, get_all_codelists_for_schema
-from library.helpers.cogs_specific_csvs import get_column_dataframes_relevent_to_an_observation_file, get_column_underscored_names_for_obs_file
-from library.helpers.csv import get_csv_as_pandas
-from library.helpers.json import get_json_as_dict
+from validator.library.helpers.reference import get_cogs_implied_resources, get_all_codelists_for_schema
+from validator.library.helpers.cogs_specific_csvs import get_column_dataframes_relevent_to_an_observation_file, get_column_underscored_names_for_obs_file
+from validator.library.helpers.csv import get_csv_as_pandas
+from validator.library.helpers.json import get_json_as_dict
 
 
 def assert_cogs_implied_resources(validator, schema, **kwargs):
