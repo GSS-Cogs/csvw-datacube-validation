@@ -23,7 +23,7 @@ stages:
 
   resources_are_accessible:
       execution_order: 2
-      description: check that our required csv and json sources can be accessed before we commence more detailed checks
+      description: confirm that our required csv and json sources can be accessed before we commence more detailed checks
       stop_on_fail: true
       steps:
         - all_http_field_responses_match:
@@ -33,16 +33,18 @@ stages:
         - all_referenced_csv_files_load:
             follow_children: true
 
-  confirm_csv_resources_exist:
-      execution_order: 3
-      description: make sure the fields we are specifiying exist in the columns.csvs referenced
-      stop_on_fail: true
-      steps:
-        - assert_all_required_columns_csv_fields_exist
-
   confirm_resource_integrity:
-      execution_order: 4
-      description: where we're making use of fields within columns.csv's, confirm the entries are correctly formatted
+      execution_order: 3
+      description: confirm that fields within resource files are correctly formatted
       stop_on_fail: true
       steps:
-        - assert_columns_csv_resources_are_correct
+        - assert_columns_csv_resources_are_correctly_formatted
+        - assert_codelist_csv_resources_are_correctly_formatted
+
+  confirm_csv_resources_exist:
+      execution_order: 4
+      description: confirm that fields that are bridging multiple resources match correctly
+      stop_on_fail: true
+      steps:
+        - assert_field_mapping_between_tableschema_and_columns_csv
+        # TODO - assert_field_mapping_between_codelists_metadata_json_and_components_csv

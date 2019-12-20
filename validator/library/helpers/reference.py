@@ -1,6 +1,39 @@
 
 from library.helpers.generic import all_dict_values
 
+def localise(links, local_ref):
+    """
+    Give a bunch of links, localise them
+
+    :param schem:
+    :return:
+    """
+
+    # Where we are using local reference sources, substitute paths appropriately
+    if local_ref == {}:
+        return links # that was easy!
+    else:
+        localised_list = []
+        for link in links:
+            for k, v in local_ref.items():
+                found = False
+                if k in link:
+                    localised_resource = v+link.split(k)[1]
+                    localised_list.append(localised_resource)
+                    found = True
+                    break
+            if not found:
+                localised_list.append(link)
+
+    return localised_list
+
+
+def get_all_codelists_for_schema(schema, local_ref):
+
+    all_codelists = [x for x in all_dict_values(schema) if "/codelists/" in str(x)]
+    return localise(all_codelists, local_ref)
+
+
 def get_cogs_implied_resources(schema, local_ref):
     """
     A very cogs specific function. Given a csvw resource, what unspecified csv
@@ -17,6 +50,7 @@ def get_cogs_implied_resources(schema, local_ref):
     expected_items = [
         "columns.csv",
         "components.csv",
+        "codelists-metadata.json"
     ]
 
     all_string_schema_fields = [x for x in all_dict_values(schema) if isinstance(x, str)]
@@ -53,20 +87,4 @@ def get_cogs_implied_resources(schema, local_ref):
     # Get rid of all duplicates
     unique_implied_resources = list(set(implied_resources))
 
-    # Where we are using local reference sources, substitute paths appropriately
-    if local_ref == {}:
-        final_reference_list = unique_implied_resources
-    else:
-        final_reference_list = []
-        for resource in unique_implied_resources:
-            for k, v in local_ref.items():
-                found = False
-                if k in resource:
-                    localised_resource = v+resource.split(k)[1]
-                    final_reference_list.append(localised_resource)
-                    found = True
-                    break
-            if not found:
-                final_reference_list.append(resource)
-
-    return final_reference_list
+    return localise(unique_implied_resources, local_ref)
