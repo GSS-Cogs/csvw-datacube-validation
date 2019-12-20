@@ -3,6 +3,7 @@ import os
 import importlib.util
 
 from inspect import getmembers, isfunction
+
 from .exceptions import ConfigurationError
 
 

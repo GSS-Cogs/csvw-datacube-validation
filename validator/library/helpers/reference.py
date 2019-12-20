@@ -1,5 +1,5 @@
 
-from library.helpers.generic import all_dict_values
+from .generic import all_dict_values
 
 def localise(links, local_ref):
     """

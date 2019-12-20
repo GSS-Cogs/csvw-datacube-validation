@@ -1,6 +1,6 @@
 
-from library.helpers.generic import is_url
-from library.helpers.exceptions import BadReferalError, ReferenceError
+from .generic import is_url
+from .exceptions import BadReferalError, ReferenceError
 
 def get_obs_path_from_schema(schema, schema_path):
     """
@@ -16,7 +16,7 @@ def get_obs_path_from_schema(schema, schema_path):
     not_http = [x for x in schema["tables"] if type(x["tableSchema"]) != str]
     if len(not_http) != 1:
         raise BadReferalError("Unable to determine the observation file from the information provided "
-                         "by csvm schema '{}'.")
+                         "by csvw schema '{}'.".format(schema))
 
     obs_file_name = not_http[0]["url"]
     return "/".join(schema_path.split("/")[:-1])+"/"+obs_file_name

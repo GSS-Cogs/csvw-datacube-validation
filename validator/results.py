@@ -1,9 +1,4 @@
 
-from pprint import pprint
-from colorama import Fore, Style
-
-from constants import LINE_BREAK
-
 class Results(object):
     """
     A Results class to hold information from failed checks until such time as
@@ -27,16 +22,4 @@ class Results(object):
 
         self.results[self.checking].update({check_name: details})
 
-    def simple_print_results(self):
-        """
-        A Simple "print the results" method for development and debugging
-
-        :return: None
-        """
-        # TODO - a real one
-        if self.results != {}:
-            print(Fore.RED + LINE_BREAK)
-            print("Schema", self.name)
-            pprint(self.results)
-            print(LINE_BREAK, Style.RESET_ALL)
 

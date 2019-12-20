@@ -1,14 +1,13 @@
 
 import os
-import sys
 import argparse
 
-from datacube import DataCubeValidator
+from datasetvalidator import DatasetValidator
 from library.helpers.config import get_function_map_from_config
 from library.helpers.yaml import confirm_valid_config, load_yaml
 from library.helpers.exceptions import ConfigurationError
 
-class Init:
+class Initialise:
     """
     Runs the tests for all datacubes as specified by the list of *-schema.json file(s) provided
     """
@@ -37,25 +36,31 @@ class Init:
         # Build a map of the checking functions we're using
         self.func_map = get_function_map_from_config(self.config)
 
-        # Run the tests
-        self.do()
 
-
-    def do(self):
-
+    def create_jobs(self):
+        """
+        Create one job as object of type DataCubeValidator for each schema we've been provided
+        """
+        self.jobs = []
         for datacube in self.datacube_schemas:
-            dcv = DataCubeValidator(datacube, self.config, self.func_map, self.local_ref)
+            self.jobs.append(DatasetValidator(datacube, self.config, self.func_map, self.local_ref))
+
+
+    def run_jobs(self):
+        """
+        Run .validate for each DataCubeValidator objects stored in the self.jobs list
+        """
+        for job in self.jobs:
 
             try:
-                result = dcv.validate()
+                result = job.validate()
 
                 # These should probably be separate things
                 self.result_set.append(result)
 
             except Exception as e:
                 raise Exception("Error encountered while attempting to validate datacube '{}'."
-                                .format(datacube)) from e
-
+                                .format(job)) from e
 
 
 if __name__ == "__main__":
@@ -68,5 +73,10 @@ if __name__ == "__main__":
     # TODO - for now we're just listifying a single path/url
     # what we want is to .walk() where it's a directory path and pass through a list
 
-    Init([args.path_or_url], args.reference)
+    validation = Initialise([args.path_or_url], args.reference)
+    validation.create_jobs()
+    validation.run_jobs()
+
+    # TODO at this point we have all the results stored in self.result_set....do we want to anything with them?
+
 

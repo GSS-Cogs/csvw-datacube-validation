@@ -5,6 +5,7 @@ from box import BoxList
 from library.helpers.json import all_dict_values, get_json_as_dict, is_json_url, get_unique_json_urls_from_schema
 from library.helpers.exceptions import exception_as_string, ConfigurationError
 
+
 def all_http_field_responses_match(validator, schema, **kwargs):
 
     err_string = "The function 'all_http_field_responses_match' requires a " \

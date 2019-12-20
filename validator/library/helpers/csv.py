@@ -1,7 +1,7 @@
 
 import pandas as pd
 
-from library.helpers.generic import is_url
+from .generic import is_url
 
 def is_csv_url(field_value):
 

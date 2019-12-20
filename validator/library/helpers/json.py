@@ -2,7 +2,7 @@
 import requests
 import json
 
-from library.helpers.generic import is_url, all_dict_values
+from .generic import is_url, all_dict_values
 
 def is_json_url(field_value):
 

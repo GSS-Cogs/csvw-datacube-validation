@@ -1,7 +1,7 @@
 
-from box import Box, BoxList
 import datetime
 
+from box import Box, BoxList
 from colorama import Fore, Style
 from texttable import Texttable
 
@@ -11,7 +11,7 @@ from library.helpers.json import get_json_as_dict
 from library.helpers.exceptions import ConfigurationError
 from library.helpers.observation_file import get_obs_path_from_schema
 
-class DataCubeValidator():
+class DatasetValidator():
     """Controls validation for a single datacube as defined by a single *-schema.json file."""
 
     def __init__(self, path_or_url, config, function_map, local_ref):
