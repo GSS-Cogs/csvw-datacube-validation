@@ -8,9 +8,9 @@ A extensible framework for validating multi dimensional datasets as defined by a
 
 You use a config file (see https://github.com/GSS-Cogs/csvw-datacube-validation/blob/master/validator/config.yaml) to define what you're validating in terms of stages made up of "steps".
 
-The "steps" are made up of functions, as defined here https://github.com/GSS-Cogs/csvw-datacube-validation/tree/master/validator/library
+Each "step" is a functions, as defined here https://github.com/GSS-Cogs/csvw-datacube-validation/tree/master/validator/library
 
-The app takes care of the task running, reporting etc and provides generic functions for accessing the various reference and data resources are defined (or implied) by the csvw schema file.
+The app takes care of the task running, reporting etc and provides accesss the various reference and data resources as defined by the csvw schema file.
 
 
 ### Install
