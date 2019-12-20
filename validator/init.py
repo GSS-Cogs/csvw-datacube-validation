@@ -23,7 +23,7 @@ class Init:
             config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.yaml")
         self.config = confirm_valid_config(config_path)
 
-        # Get our local reference directories where they've been supplied
+        # Get our local reference directories from
         if local_ref_path != None:
             try:
                 self.local_ref = load_yaml(local_ref_path)

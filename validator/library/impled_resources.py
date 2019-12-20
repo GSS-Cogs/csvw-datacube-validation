@@ -166,7 +166,8 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
                 # Last values in property_template url
                 val = entry(row, "property_template", -1)
                 match = kebab_pattern.match(val)
-                if not match:
+                print(val, match)
+                if match == None:
                     validator.results.add_result(
                         "The value '{}' is incorrect for column 'property_template'".format(val),
                         {"expected (example)": "http://gss-data.org.uk/def/dimension/styled-like-this",
@@ -177,7 +178,7 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
                 # Second to last value in value_template url
                 val = entry(row, "value_template", -2)
                 match = kebab_pattern.match(val)
-                if not match:
+                if match == None:
                     validator.results.add_result(
                         "The value '{}' is incorrect for column 'value_template'".format(val),
                         {"expected (example)": "http://gss-data.org.uk/def/concept/styled-like-this/{styled_like_this}",
@@ -186,7 +187,7 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
                 # Last value in value_template url
                 val = entry(row, "value_template", -1)
                 match = snake_pattern.match(val[1:-1])
-                if not match:
+                if match == None:
                     validator.results.add_result(
                         "The value '{}' is incorrect for column 'value_template'".format(val),
                         {"expected (example)": "http://gss-data.org.uk/def/concept/styled-like-this/{styled_like_this}",

@@ -36,6 +36,7 @@ class DataCubeValidator():
         for eo in execution_order:
             stage_dict = [v for k,v in self.config.stages.items() if v["execution_order"] == eo][0]
 
+            got_result = False
             for step in stage_dict.steps:
 
                 # If the step has keyword arguments, get them
