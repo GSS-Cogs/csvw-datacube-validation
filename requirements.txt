@@ -4,3 +4,4 @@ requests==2.21.0
 colorama==0.4.3
 pandas==0.24.2
 pyaml==19.4.1
+texttable==1.6.2
