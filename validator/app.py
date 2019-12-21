@@ -11,10 +11,11 @@ class Initialise:
     Runs the tests for all datacubes as specified by the list of *-schema.json file(s) provided
     """
 
-    def __init__(self, datacube_schemas, local_ref_path, config_path=None):
+    def __init__(self, datacube_schemas, local_ref_path, config_path=None, display_fails_as_found=True):
 
         self.datacube_schemas = datacube_schemas
         self.result_set = []
+        self.display_fails_as_found = display_fails_as_found
 
         # Load the config, this controls global settings as well as defining what checks to run and when
         if config_path == None:
@@ -42,7 +43,7 @@ class Initialise:
         """
         self.jobs = []
         for datacube in self.datacube_schemas:
-            self.jobs.append(DatasetValidator(datacube, self.config, self.func_map, self.local_ref))
+            self.jobs.append(DatasetValidator(datacube, self.config, self.func_map, self.local_ref, self.display_fails_as_found))
 
 
     def run_jobs(self):

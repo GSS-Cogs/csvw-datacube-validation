@@ -40,9 +40,6 @@ stages:
       steps:
         - assert_columns_csv_resources_are_correctly_formatted
 
-  # TODO
-  # Multi step stages are not working properly, sort it out
-
   confirm_codelist_csv_integrity:
       execution_order: 4
       description: confirm that fields within codelists csvs are correctly formatted
