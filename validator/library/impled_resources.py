@@ -156,7 +156,7 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
             Box({
                 "column": "value_template",
                 "begins_with": "http://gss-data.org.uk/def/concept/",
-                "but_doesnt_end_with": "[A-Za-z0-9-]+\/[A-Za-z0-9_]*$",
+                "but_doesnt_end_with": "[A-Za-z0-9-]+\/{[A-Za-z0-9_]*}$",
                 "example": "http://gss-data.org.uk/def/concept/styled-like-this/{styled_like_this}"
             }),
             Box({

@@ -14,12 +14,12 @@ options:
 # Defining Stages of validation:
 stages:
 
-  #basic_structure_linting:
-  #    execution_order: 1
-  #    description: run basic csvlint validation relevant to this dataset
-  #    stop_on_fail: true
-  #    steps:
-  #      - csvlint
+  basic_structure_linting:
+      execution_order: 1
+      description: run basic csvlint validation relevant to this dataset
+      stop_on_fail: true
+      steps:
+        - csvlint
 
   resources_are_accessible:
       execution_order: 2
@@ -35,20 +35,14 @@ stages:
 
   confirm_columns_csv_integrity:
       execution_order: 3
-      description: confirm that fields within columns csvs are correctly formatted
+      description: confirm the cogs csv reference data for this dataset is valid
       stop_on_fail: true
       steps:
         - assert_columns_csv_resources_are_correctly_formatted
-
-  confirm_codelist_csv_integrity:
-      execution_order: 4
-      description: confirm that fields within codelists csvs are correctly formatted
-      stop_on_fail: true
-      steps:
         - assert_codelist_csv_resources_are_correctly_formatted
 
   confirm_csv_resources_exist:
-      execution_order: 5
+      execution_order: 4
       description: confirm that fields that are bridging multiple resources match correctly
       stop_on_fail: true
       steps:
