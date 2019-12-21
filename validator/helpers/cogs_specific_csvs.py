@@ -31,28 +31,36 @@ def get_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
     load. Filter to just the fields that matter to the task in hand, then return
 
     :param schema:  schema as dict
-    :return:  list of pandas dataframes
+    :return:  dict of  {path to: pandas dataframes)
     """
 
     fields_required = get_column_underscored_names_for_obs_file(schema)
 
     paths_to_columns_csvs = [x for x in get_cogs_implied_resources(schema, local_ref) if x.endswith("columns.csv")]
 
-    initial_data_frames = []
+    path_df_map = {}
     for csv_path in paths_to_columns_csvs:
-        initial_data_frames.append(
-            get_csv_as_pandas(csv_path, "load columns csv as part of 'assert_columns_csv_resources_are_correct' function")
-        )
+        df = get_csv_as_pandas(csv_path, "load columns csv as part of 'assert_columns_csv_resources_are_correct' function")
+        path_df_map[csv_path] = df
 
-    data_frames = []
-    for df in initial_data_frames:
+    for path, df in path_df_map.items():
         df = df[df["name"].map(lambda x: x in fields_required)]
-        data_frames.append(df)
+        path_df_map[path] = df
 
-    # Make sure we have one columns.csv file entry for every concept
-    all_entries = 0
-    for df in data_frames:
-        all_entries += len(df)
+    return path_df_map
 
-    return data_frames
 
+def get_paths_and_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
+    """
+    Wrapper, for when we onyl want the dataframes from:
+    get_column_dataframes_relevent_to_an_observation_file
+    """
+
+    # TODO - should be a one liner really
+    path_df_map = get_column_dataframes_relevent_to_an_observation_file(schema, local_ref)
+
+    df_list = []
+    for _, df in path_df_map.items():
+        df_list.append(df)
+
+    return path_df_map

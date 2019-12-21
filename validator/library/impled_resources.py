@@ -4,7 +4,8 @@ import re
 from box import Box
 
 from validator.helpers.reference import get_cogs_implied_resources, get_all_codelists_for_schema
-from validator.helpers.cogs_specific_csvs import get_column_dataframes_relevent_to_an_observation_file, get_column_underscored_names_for_obs_file
+from validator.helpers.cogs_specific_csvs import get_column_dataframes_relevent_to_an_observation_file, \
+    get_column_underscored_names_for_obs_file, get_paths_and_column_dataframes_relevent_to_an_observation_file
 from validator.helpers.csv import get_csv_as_pandas
 from validator.helpers.json import get_json_as_dict
 from validator.helpers.pandas import assertions
@@ -147,11 +148,9 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
     are burning us for now. We can always expand on this later.
     """
 
-    column_dfs = get_column_dataframes_relevent_to_an_observation_file(schema, validator.local_ref)
+    path_df_map = get_paths_and_column_dataframes_relevent_to_an_observation_file(schema, validator.local_ref)
 
-    for df in column_dfs:
-        print(df.value_template.unique())
-        print(df.property_template.unique())
+    for path, df in path_df_map.items():
 
         patterns = [
             Box({
@@ -175,9 +174,8 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
             for cell_val in badly_formatted_cells:
                 validator.results.add_result("The path segment '{}' in column '{}' is incorrectly formatted."
                                              .format(cell_val[len(p.begins_with):], p.column),
-                                             {"got": cell_val, "correct (example):": p.example})
-
-
+                                             {"got": cell_val, "correct (example):": p.example,
+                                             "path": path})
 
     """
     # Save some space
