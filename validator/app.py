@@ -2,9 +2,9 @@
 import os
 
 from .datasetvalidator import DatasetValidator
-from .library.helpers.config import get_function_map_from_config
-from .library.helpers.yaml import confirm_valid_config, load_yaml
-from .library.helpers.exceptions import ConfigurationError
+from .helpers.config import get_function_map_from_config
+from .helpers.yaml import confirm_valid_config, load_yaml
+from .helpers.exceptions import ConfigurationError
 
 class Initialise:
     """

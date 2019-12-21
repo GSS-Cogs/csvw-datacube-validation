@@ -1,10 +1,13 @@
 
 import re
 
-from validator.library.helpers.reference import get_cogs_implied_resources, get_all_codelists_for_schema
-from validator.library.helpers.cogs_specific_csvs import get_column_dataframes_relevent_to_an_observation_file, get_column_underscored_names_for_obs_file
-from validator.library.helpers.csv import get_csv_as_pandas
-from validator.library.helpers.json import get_json_as_dict
+from box import Box
+
+from validator.helpers.reference import get_cogs_implied_resources, get_all_codelists_for_schema
+from validator.helpers.cogs_specific_csvs import get_column_dataframes_relevent_to_an_observation_file, get_column_underscored_names_for_obs_file
+from validator.helpers.csv import get_csv_as_pandas
+from validator.helpers.json import get_json_as_dict
+from validator.helpers.pandas import assertions
 
 
 def assert_cogs_implied_resources(validator, schema, **kwargs):
@@ -144,6 +147,39 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
     are burning us for now. We can always expand on this later.
     """
 
+    column_dfs = get_column_dataframes_relevent_to_an_observation_file(schema, validator.local_ref)
+
+    for df in column_dfs:
+        print(df.value_template.unique())
+        print(df.property_template.unique())
+
+        patterns = [
+            Box({
+                "column": "value_template",
+                "begins_with": "http://gss-data.org.uk/def/concept/",
+                "but_doesnt_end_with": "[A-Za-z0-9-]+\/[A-Za-z0-9_]*$",
+                "example": "http://gss-data.org.uk/def/concept/styled-like-this/{styled_like_this}"
+            }),
+            Box({
+                "column": "property_template",
+                "begins_with": "http://gss-data.org.uk/def/dimension/",
+                "but_doesnt_end_with": "[A-Za-z0-9-]*$",
+                "example": "http://gss-data.org.uk/def/dimension/styled-like-this"
+            })
+        ]
+
+        for p in patterns:
+
+            finder = assertions.begins_then_not_re(p.begins_with, p.but_doesnt_end_with)
+            badly_formatted_cells = list(df[p.column][df[p.column].apply(finder) == True].unique())
+            for cell_val in badly_formatted_cells:
+                validator.results.add_result("The path segment '{}' in column '{}' is incorrectly formatted."
+                                             .format(cell_val[len(p.begins_with):], p.column),
+                                             {"got": cell_val, "correct (example):": p.example})
+
+
+
+    """
     # Save some space
     our_dim_prefix = "http://gss-data.org.uk/def/dimension/"
     our_concept_prefix = "http://gss-data.org.uk/def/concept/"
@@ -191,3 +227,5 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
                         "The value '{}' is incorrect for column 'value_template'".format(val),
                         {"expected (example)": "http://gss-data.org.uk/def/concept/styled-like-this/{styled_like_this}",
                          "got": row["value_template"], "problem_field": val})
+    
+    """

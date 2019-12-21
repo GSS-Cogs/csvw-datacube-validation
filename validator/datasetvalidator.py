@@ -6,9 +6,9 @@ from colorama import Fore, Style
 from texttable import Texttable
 
 from .results import Results
-from .library.helpers.json import get_json_as_dict
-from .library.helpers.exceptions import ConfigurationError
-from .library.helpers.observation_file import get_obs_path_from_schema
+from .helpers.json import get_json_as_dict
+from .helpers.exceptions import ConfigurationError
+from .helpers.observation_file import get_obs_path_from_schema
 
 LINE_BREAK = "-----------------------------------"
 

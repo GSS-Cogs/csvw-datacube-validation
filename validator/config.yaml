@@ -14,12 +14,12 @@ options:
 # Defining Stages of validation:
 stages:
 
-  basic_structure_linting:
-      execution_order: 1
-      description: run basic csvlint validation relevant to this dataset
-      stop_on_fail: true
-      steps:
-        - csvlint
+  #basic_structure_linting:
+  #    execution_order: 1
+  #    description: run basic csvlint validation relevant to this dataset
+  #    stop_on_fail: true
+  #    steps:
+  #      - csvlint
 
   resources_are_accessible:
       execution_order: 2
