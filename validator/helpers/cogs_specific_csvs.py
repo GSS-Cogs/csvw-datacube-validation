@@ -25,7 +25,7 @@ def get_column_underscored_names_for_obs_file(schema):
     return [x["name"] for x in obs_table["tableSchema"]["columns"]]
 
 
-def get_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
+def get_paths_and_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
     """
     Get dataframes  for all columns.csv files relevent to a give file we're trying to
     load. Filter to just the fields that matter to the task in hand, then return
@@ -50,17 +50,17 @@ def get_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
     return path_df_map
 
 
-def get_paths_and_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
+def get_column_dataframes_relevent_to_an_observation_file(schema, local_ref):
     """
-    Wrapper, for when we onyl want the dataframes from:
+    Wrapper, for when we olyl want the dataframes from:
     get_column_dataframes_relevent_to_an_observation_file
     """
 
     # TODO - should be a one liner really
-    path_df_map = get_column_dataframes_relevent_to_an_observation_file(schema, local_ref)
+    path_df_map = get_paths_and_column_dataframes_relevent_to_an_observation_file(schema, local_ref)
 
     df_list = []
     for _, df in path_df_map.items():
         df_list.append(df)
 
-    return path_df_map
+    return df_list

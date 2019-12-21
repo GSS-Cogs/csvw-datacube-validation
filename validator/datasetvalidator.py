@@ -9,6 +9,7 @@ from .results import Results
 from .helpers.json import get_json_as_dict
 from .helpers.exceptions import ConfigurationError
 from .helpers.observation_file import get_obs_path_from_schema
+from .helpers.parser import make_instruction_from_step
 
 LINE_BREAK = "-----------------------------------"
 
@@ -37,65 +38,38 @@ class DatasetValidator():
         for eo in execution_order:
             stage_dict = [v for k,v in self.config.stages.items() if v["execution_order"] == eo][0]
 
-            got_result = False
             for step in stage_dict.steps:
 
-                # If the step has keyword arguments, get them
+                instruction = make_instruction_from_step(step)
+                for function_name, step_kwargs in instruction.items():
 
-                # TODO - this is awful!!!
-                # TODO - do a resursive thingy to get all the kwargs
+                    self.results.checking = function_name
+                    self.function_map[function_name](self, self.schema, **step_kwargs)
+                    self.results.checking = None
 
-                step_kwargs = {}
-                if type(step) == str:
-                    name = step
-                elif type(step) == dict or type(step) == Box:
-                    for k, v in step.items():
-                        name = k
-                        if isinstance(v, dict) or isinstance(v, Box):
-                            for k2, v2 in v.items():
-                                step_kwargs[k2] = v2
-                        else:
-                            if isinstance(v, list) or isinstance(v, BoxList):
-                                for sub_step in v:
-                                    if isinstance(sub_step, dict) or isinstance(sub_step, Box):
-                                        for k3, v3 in sub_step.items():
-                                            step_kwargs[k3] = v3
-                                    else:
-                                        # ewww
-                                        raise ConfigurationError("Configuration not accounted for: " + str(sub_step))
-                            else:
-                                step_kwargs[k] = v
-                else:
-                    raise ConfigurationError("Config steps can only be dictionary items or strings"
-                                             ", the step '{}' is a '{}'.".format(step, str(type(step))))
+                    # TODO printing based on results. This should be pulled out
+                    if function_name not in self.results.results.keys():
+                        print(Fore.GREEN+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), stage_dict.description)
+                    else:
+                        print(Fore.RED+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), stage_dict.description)
 
-                self.results.checking = name
-                self.function_map[name](self, self.schema, **step_kwargs)
-                self.results.checking = None
+                        # TODO - this should be its own function
+                        # also, we might not want to print like this, or print at all
+                        for problem, details in self.results.results[function_name].items():
 
-            # TODO printing based on results. This should be pulled out
-            if name not in self.results.results.keys():
-                print(Fore.GREEN+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), stage_dict.description)
-            else:
-                print(Fore.RED+datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), stage_dict.description)
+                            # Use a fancy text table for readibility
+                            table = [["problem ==> ", problem]]
+                            for k, v in details.items():
+                                table.append([k, v])
 
-                # TODO - this should be its own function
-                # also, we might not want to print like this, or print at all
-                for problem, details in self.results.results[name].items():
+                            t = Texttable()
+                            t.add_rows(table)
+                            print(t.draw())
+                            print("")
 
-                    # Use a fancy text table for readibility
-                    table = [["problem ==> ", problem]]
-                    for k, v in details.items():
-                        table.append([k, v])
-
-                    t = Texttable()
-                    t.add_rows(table)
-                    print(t.draw())
-                    print("")
-
-                # If stop on fail, stop looping through stages for this schema
-                if stage_dict.stop_on_fail:
-                    break
+                        # If stop on fail, stop looping through stages for this schema
+                        if stage_dict.stop_on_fail:
+                            break
 
         # Reset fancy green font
         print(Style.RESET_ALL)
