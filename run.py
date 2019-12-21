@@ -4,7 +4,6 @@ import argparse
 from validator.app import Initialise
 
 if __name__ == "__main__":
-
     # TODO - flag for display fails as found
 
     parser = argparse.ArgumentParser()
@@ -20,4 +19,3 @@ if __name__ == "__main__":
     validation.run_jobs()
 
     # TODO at this point we have all the results stored in self.result_set....do we want to anything with them?
-
