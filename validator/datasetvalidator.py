@@ -32,6 +32,8 @@ class DatasetValidator():
         print("for: ", self.schema_path)
         print("--- doing ---", Style.RESET_ALL)
 
+        stop = False
+
         # Run through the stages as defined by the execution order
         # TODO - better, this is kinda nasty
         execution_order = set([v["execution_order"] for k,v in self.config.stages.items()])
@@ -40,6 +42,9 @@ class DatasetValidator():
 
             displayed_stage_name = False
             for step in stage_dict.steps:
+
+                if stop:
+                    continue
 
                 instruction = make_instruction_from_step(step)
                 for function_name, step_kwargs in instruction.items():
@@ -74,7 +79,8 @@ class DatasetValidator():
 
                     # If stop on fail, stop looping through stages for this schema
                     if stage_dict.stop_on_fail:
-                        break
+                        print("Stopping on fail.")
+                        stop = True
 
         # Reset fancy green font
         print(Style.RESET_ALL)
