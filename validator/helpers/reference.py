@@ -1,40 +1,16 @@
 
-from .generic import all_dict_values
+from .generic import all_dict_values, localise
 
-def localise(links, local_ref):
-    """
-    Give a bunch of links, localise them
-
-    :param schem:
-    :return:
-    """
-
-    # Where we are using local reference sources, substitute paths appropriately
-    if local_ref == {}:
-        return links # that was easy!
-    else:
-        localised_list = []
-        for link in links:
-            for k, v in local_ref.items():
-                found = False
-                if k in link:
-                    localised_resource = v+link.split(k)[1]
-                    localised_list.append(localised_resource)
-                    found = True
-                    break
-            if not found:
-                localised_list.append(link)
-
-    return localised_list
-
-
-def get_all_codelists_for_schema(schema, local_ref):
+def get_all_codelist_paths_for_schema(schema, local_ref):
 
     all_codelists = [x for x in all_dict_values(schema) if "/codelists/" in str(x)]
-    return localise(all_codelists, local_ref)
+    return list(set(localise(all_codelists, local_ref)))
 
 
 def get_cogs_implied_resources(schema, local_ref):
+
+    # TODO - not happy with this
+
     """
     A very cogs specific function. Given a csvw resource, what unspecified csv
     resources can we indfer
@@ -56,6 +32,7 @@ def get_cogs_implied_resources(schema, local_ref):
     all_string_schema_fields = [x for x in all_dict_values(schema) if isinstance(x, str)]
 
     implied_resources = []
+
     for field in all_string_schema_fields:
         if "codelist-schema.json" in field:
             for expected_item in expected_items:
@@ -84,7 +61,7 @@ def get_cogs_implied_resources(schema, local_ref):
                 resource_path = "https://gss-cogs.github.io/" + ref_repo + "/reference/" + expected_item
                 implied_resources.append(resource_path)
 
-    # Get rid of all duplicates
+    # Combine then get rid of all duplicates
     unique_implied_resources = list(set(implied_resources))
 
     return localise(unique_implied_resources, local_ref)
