@@ -6,7 +6,7 @@ from box import Box
 from validator.helpers.reference import get_cogs_implied_resources, get_all_codelist_paths_for_schema
 from validator.helpers.cogsresources import get_column_csv_paths_with_dfs_filtered_to_relevant, \
     get_column_underscored_names_for_obs_file, get_paths_and_dataframes_of_associated_csvs, \
-    get_component_dfs_for_reference_repos_used, get_codelist_metadata_for_codelist_urls_in_schema
+    get_component_csv_paths_with_dfs_for_reference_repos_used
 from validator.helpers.csv import get_csv_as_pandas
 from validator.helpers.json import get_json_as_dict
 from validator.helpers.pandas import assertions
@@ -73,7 +73,7 @@ def assert_field_mapping_between_tableschema_and_columns_csv(validator, schema, 
                             {"column_csvs_found_for_this_schema": all_column_csvs_checked})
 
 
-def assert_components_csv_resources_are_correctly_mapped(validator, schema, **kwargs):
+def assert_components_csv_resources_are_correctly_mapped_and_formatted(validator, schema, **kwargs):
     """
     Get the relevent column df info, use this to determine which components entries we SHOULD have,
     compare with what we've got, report missing.
@@ -81,7 +81,7 @@ def assert_components_csv_resources_are_correctly_mapped(validator, schema, **kw
 
     # Resources we will need
     column_dfs = get_column_csv_paths_with_dfs_filtered_to_relevant(schema, validator.local_ref)
-    components_dfs = get_component_dfs_for_reference_repos_used(schema, validator.local_ref)
+    components_dfs = get_component_csv_paths_with_dfs_for_reference_repos_used(schema, validator.local_ref)
 
     component_types = [
         Box({"path": "http://gss-data.org.uk/def/dimension/", "qb":"qb:dimension", "title": "Dimension"}),
@@ -89,6 +89,8 @@ def assert_components_csv_resources_are_correctly_mapped(validator, schema, **kw
         Box({"path": "http://gss-data.org.uk/def/attribute/", "qb": "qb:attribute", "title": "Attribute"})
     ]
 
+    # Check fields match cross-resource
+    components_found = []
     for component in component_types:
 
         for path, df in column_dfs.items():
@@ -104,7 +106,7 @@ def assert_components_csv_resources_are_correctly_mapped(validator, schema, **kw
                 found = False
                 component_type_given = None
 
-                for comp_df in components_dfs:
+                for _, comp_df in components_dfs.items():
                     if title in comp_df["Label"].unique():
                         found = True
                         component_type_given = list(comp_df["Component Type"][comp_df["Label"] == title].unique())[0]
@@ -119,6 +121,67 @@ def assert_components_csv_resources_are_correctly_mapped(validator, schema, **kw
                                                "but no component entry could be found".format(title, path),
                                                 {"signifying property template entry": siginifying_entry})
                                                 # TODO: it'd be nice to inlcude the path to components files
+                else:
+                    components_found.append(title)
+
+
+    # Now we know which components we're using, validate them
+    for comp_path, comp_df in components_dfs.items():
+        comp_df = comp_df[comp_df["Label"].map(lambda x: x in components_found) == True]
+        issues = get_issue_detail_dict_as_list_from_component_dataframe(comp_path, comp_df)
+        for msg, details in issues.items():
+            validator.results.add_result(msg, details)
+
+
+def get_issue_detail_dict_as_list_from_component_dataframe(df_path, df):
+    """
+    Create a list of issues dicts, for a given components dataframe.
+
+    :param df: dataframe
+    :return:  list of dict {issues: {details}}
+    """
+
+    patterns = [
+        Box({
+            "column": "Codelist",
+            "begins_with": "http://gss-data.org.uk/def/concept-scheme/",
+            "but_doesnt_end_with": "[A-Za-z0-9-]*$",
+            "example": "http://gss-data.org.uk/def/concept-scheme/styled-like-this"
+        }),
+        ]
+
+    issue_details_dict = {}
+    for p in patterns:
+
+        # Re finder
+        finder = assertions.begins_then_not_re(p.begins_with, p.but_doesnt_end_with)
+        badly_formatted_cells = list(df[p.column][df[p.column].apply(finder) == True].unique())
+        for cell_val in badly_formatted_cells:
+
+            key_message = "The path segment '{}' in column '{}' is incorrectly formatted." \
+                                        .format(cell_val[len(p.begins_with):], p.column)
+
+            issue_details_dict[key_message] = {"got": cell_val, "correct (example):": p.example,
+                                        "path": df_path}
+
+    # Check that we're only using "concept scheme" for dimensions
+    df = df[df["Codelist"].map(lambda x: x.startswith("http://gss-data.org.uk/def/concept-scheme/") == True)]
+
+    # TODO - slow
+    for _, row in df.iterrows():
+
+        # TODO - all the explicit row calls will be fragile, be smarter
+        if row["Component Type"] != "Dimension":
+
+            key_message = "The component labelled '{}' has a concept scheam declared: '{}'. So it should have" \
+                      " component type of 'Dimension', but has '{}'.".format(row["Label"], row["Codelist"],
+                                                                             row["Component Type"])
+
+            issue_details_dict[key_message] = {"component_csv_path": df_path, "row": {k:v for k, v in row.items()}}
+
+    return issue_details_dict
+
+
 
 
 def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kwargs):
@@ -126,7 +189,6 @@ def assert_columns_csv_resources_are_correctly_formatted(validator, schema, **kw
     Hard to know where to draw the line with this. Will restrict it to those things that
     are burning us for now. We can always expand on this later.
     """
-
 
     # First formatting checks
     path_df_map = get_paths_and_dataframes_of_associated_csvs(schema, validator.local_ref, "columns.csv")

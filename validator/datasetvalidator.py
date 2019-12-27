@@ -26,12 +26,13 @@ class DatasetValidator():
         self.function_map = function_map
         self.obs_file_path = get_obs_path_from_schema(self.schema, path_or_url)
 
-    def validate(self):
+    def validate(self, cache):
 
         print(Fore.GREEN + LINE_BREAK)
         print("for: ", self.schema_path)
         print("--- doing ---", Style.RESET_ALL)
 
+        self.cache = cache
         stop = False
 
         # Run through the stages as defined by the execution order

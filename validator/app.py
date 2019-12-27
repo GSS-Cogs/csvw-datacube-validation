@@ -32,6 +32,9 @@ class Initialise:
         else:
             self.local_ref = {}
 
+        # For caching things
+        self.context = {}
+
         # ----------------------
         # Build a map of the checking functions we're using
         self.func_map = get_function_map_from_config(self.config)
@@ -53,7 +56,7 @@ class Initialise:
         for job in self.jobs:
 
             try:
-                result = job.validate()
+                result = job.validate(self.context)
 
                 # These should probably be separate things
                 self.result_set.append(result)

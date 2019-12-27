@@ -100,7 +100,7 @@ def get_codelist_metadata_for_codelist_urls_in_schema(schema, local_ref):
     return relevant_codelist_metadata
 
 
-def get_component_dfs_for_reference_repos_used(schema, local_ref):
+def get_component_csv_paths_with_dfs_for_reference_repos_used(schema, local_ref):
     """
     Get a list of components csvs referenced by this dataset, as dataframes
 
@@ -111,10 +111,13 @@ def get_component_dfs_for_reference_repos_used(schema, local_ref):
 
     msg = "getting components.csv as part of 'get_component_dfs_for_reference_repos_used', using path '{}'"
 
-    component_csvs = [get_csv_as_pandas(x, msg.format(x)) for x in get_cogs_implied_resources(schema, local_ref)
-                      if x.endswith("components.csv")]
+    component_paths = [x for x in get_cogs_implied_resources(schema, local_ref) if x.endswith("components.csv")]
 
-    return component_csvs
+    path_df_dict = {}
+    for path in component_paths:
+        path_df_dict[path] = get_csv_as_pandas(path, msg.format(path))
+
+    return path_df_dict
 
 
 def get_column_csv_paths_with_dfs_filtered_to_relevant(schema, local_ref):

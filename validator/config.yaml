@@ -14,39 +14,26 @@ options:
 # Defining Stages of validation:
 stages:
 
-  basic_structure_linting:
+  external_linting_tools:
       execution_order: 1
       description: run basic csvlint validation relevant to this dataset
       stop_on_fail: false
       steps:
         - csvlint
 
-  resources_are_accessible:
+  validate_reference_repos:
       execution_order: 2
-      description: confirm that our required csv and json sources can be accessed before we commence more detailed checks
+      description: confirm format and structure of cogs reference repos
       stop_on_fail: false
       steps:
-        - all_http_field_responses_match:
-            status_codes: 200
-        - all_referenced_json_documents_load:
-            follow_children: true
-        - all_referenced_csv_files_load:
-            follow_children: true
+        - validate_columns_csvs_for_reference_repos_used_by_schema
+        - validate_components_csvs_for_reference_repos_used_by_schema
+        - validate_codelist_csvs_for_reference_repos_used_by_schema
 
-  confirm_columns_csv_integrity:
+  cross_validate_reference_data:
       execution_order: 3
-      description: confirm the cogs csv reference data for this dataset is correctly formatted
+      description: confirm that fields that need to match across resources do
       stop_on_fail: false
       steps:
-        - assert_columns_csv_resources_are_correctly_formatted
-        - assert_codelist_csv_resources_are_correctly_formatted
-        #TODO - assert_components_csv_resources_are_correctly_formatted
-
-  confirm_csv_resources_exist:
-      execution_order: 4
-      description: confirm that fields that are bridging multiple resources match correctly
-      stop_on_fail: false
-      steps:
-        - assert_field_mapping_between_tableschema_and_columns_csv
-        - assert_components_csv_resources_are_correctly_mapped
-        # TODO - assert_columns_csv_codelist_entries_in_metadata_schema
+        - compare_components_and_columns_for_reference_repos_used_by_schema
+        - compare_components_and_codelist_metadata_for_reference_repos_used_by_schema

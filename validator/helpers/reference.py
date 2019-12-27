@@ -11,9 +11,13 @@ def get_cogs_implied_resources(schema, local_ref):
 
     # TODO - not happy with this
 
+    # TODO
+    # TODO - confirm these things actually exist before returning!
+    # TODO
+
     """
     A very cogs specific function. Given a csvw resource, what unspecified csv
-    resources can we indfer
+    resources can we inffer
 
     :param schema:   dict of schmea
     "param localiser:  substitutions dict for localising references

@@ -17,7 +17,7 @@ class Results(object):
 
         if check_name in self.results[self.checking].keys():
             raise Exception("Aborting. Attempting to add results for a check that we already have"
-                            "a result for. Details: 'id:'{} , 'check_name:' {}, 'details:' {} "
+                            "a result for. Details: 'id:'{}' , 'check_name:' {}, 'details:' {} "
                             .format(self.checking, check_name, str(details)))
 
         self.results[self.checking].update({check_name: details})
