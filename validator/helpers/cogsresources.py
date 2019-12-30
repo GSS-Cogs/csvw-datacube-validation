@@ -1,23 +1,7 @@
 
-from .reference import get_cogs_implied_resources, get_all_codelist_paths_for_schema
+from .reference import get_cogs_implied_resources
 from .observation_file import get_obs_file_table_schema
-from .generic import all_dict_values, is_url, localise
 from .csv import get_csv_as_pandas
-from .json import get_json_as_dict
-
-
-def get_schemas_for_reference_repos(schema, schema_name):
-    """
-    Find the metadata schemas for all reference repos relevant to a
-    given csvw.
-
-    :param schema: schema as dict
-    :name: the name of the schemas we're looking for, i.e 'codelists-metadata.json'
-    :return: list of urls
-    """
-
-    links = [x for x in all_dict_values(schema) if is_url(x) and x.endswith(schema_name)]
-    return [localise(x, schema.local_ref) for x in links]
 
 
 def get_column_underscored_names_for_obs_file(schema):
@@ -60,44 +44,6 @@ def get_paths_and_dataframes_of_associated_csvs(schema, local_ref, file_name):
 
     return path_df_map
 
-
-def get_codelist_metadata_dicts(schema, local_ref):
-    """
-    Get the codelist-metadata json links
-
-    :return: [ url fo codelist-metadata-jsons ]
-    """
-
-    json_paths = [x for x in get_cogs_implied_resources(schema, local_ref) if x.endswith("codelists-metadata.json")]
-    return [get_json_as_dict(x, "getting codelist-json from '{}' as dict".format(x)) for x in json_paths]
-
-
-def get_codelist_metadata_for_codelist_urls_in_schema(schema, local_ref):
-    """
-    Get a list of metadata for any codelists directly referenced in the schema
-
-    i.e list of this kinda thing
-    {
-    "url": "codelists/employment-status.csv",
-    "tableSchema": "https://gss-cogs.github.io/ref_common/codelist-schema.json",
-    "rdfs:label": "Employment Status"
-    }
-    """
-
-    codelists_for_schema = get_all_codelist_paths_for_schema(schema, local_ref)
-    codelist_metadata_jsons_for_schema = [get_json_as_dict(x, "TODO") for x in get_cogs_implied_resources(schema, local_ref) if
-                                    x.endswith("codelists-metadata.json")]
-
-    # Create a mapping of the relative path of codelists to absolute path
-    codelist_path_mapping = {"/".join(x.split("/")[-2:]):x for x in codelists_for_schema}
-
-    relevant_codelist_metadata = []
-    for codelist_metadata_json in codelist_metadata_jsons_for_schema:
-        for metadata_entry in codelist_metadata_json["tables"]:
-            if metadata_entry["url"] in codelist_path_mapping.keys():
-                relevant_codelist_metadata.append(metadata_entry)
-
-    return relevant_codelist_metadata
 
 
 def get_component_csv_paths_with_dfs_for_reference_repos_used(schema, local_ref):

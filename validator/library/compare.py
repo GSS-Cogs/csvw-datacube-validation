@@ -103,7 +103,7 @@ def compare_components_csv_with_codelists_metadata(validator, comp_path):
 
         if not isinstance(codelist_entry, str):
             continue
-            
+
         if codelist_entry.startswith("'http://gss-data.org.uk/"):
 
             if codelist_entry not in codelist_reference.keys():
