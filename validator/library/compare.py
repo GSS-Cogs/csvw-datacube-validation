@@ -1,13 +1,14 @@
 
-import re
-
 from box import Box
 from gssutils import pathify
 
 from validator.helpers.reference import get_cogs_implied_resources
 from validator.helpers.csv import get_csv_as_pandas
 from validator.helpers.json import get_json_as_dict
+from validator.helpers.pathify import pathify
 from validator.cacher import cache
+
+
 
 def compare_components_and_columns_for_reference_repos_used_by_schema(validator, schema, **kwargs):
 
