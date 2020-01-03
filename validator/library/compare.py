@@ -1,6 +1,5 @@
 
 from box import Box
-from gssutils import pathify
 
 from validator.helpers.reference import get_cogs_implied_resources
 from validator.helpers.csv import get_csv_as_pandas
