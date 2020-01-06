@@ -28,7 +28,7 @@ For now we need to run the python script directly
 `python3 <wherever-you-cloned-it>/csvw-datacube-validation/run.py <path-to-schema>`
 
 For convenience it's probably worth creating an alias by adding `alias validate="python3 <PATH TO WHERE YOU CLONES IT>/csvw-datacube-validation/run.py` to your `./bashrc` so you can use via `validate <path-to-schema>`.
-  
+
 Path to schema can always be a url, eg "https://ci.floop.org.uk/job/GSS_data/job/Disability/job/PHE-Co-occurring-substance-misuse-and-mental-health-issues/82/artifact/datasets/PHE-Co-occurring-substance-misuse-and-mental-health-issues/out/county-ua-deprivation-deciles-in-england-imd2010.csv-schema.json", and you can use locally held scheama files - but - if you want to validate against your locally held reference data (eg `/ref_common` or `/family-disabily/reference/`) you'll need to set up local reference sources (see below).
 
 
@@ -50,4 +50,4 @@ A few stages to set this up.
 *explanation - that's telling the app that when I want to use locally held reference data and
 `/family-disability/` is in the path, go to `/Users/adamsm/go/src/github.com/GSS-Cogs/family-disability/` instead.*
 
-To run in local reference mode include the `-r` flag when you run the app and point to where you saved your yaml file, i.e `validate -r /path-to/substitutes.yaml <path-to-schema>`.
+To run in local reference mode run with the `-l` flag and have the path to your reference file exported as the environment variable `LOCAL_REF`.
