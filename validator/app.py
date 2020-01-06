@@ -11,7 +11,7 @@ class Initialise:
     Runs the tests for all datacubes as specified by the list of *-schema.json file(s) provided
     """
 
-    def __init__(self, datacube_schemas, local_ref_path, config_path=None, display_fails_as_found=True):
+    def __init__(self, datacube_schemas, use_local, config_path=None, display_fails_as_found=True):
 
         self.datacube_schemas = datacube_schemas
         self.result_set = []
@@ -23,13 +23,16 @@ class Initialise:
         self.config = confirm_valid_config(config_path)
 
         # Get our local reference directories from
-        if local_ref_path != None:
+        local_ref_path = os.getenv("LOCAL_REF", None)
+        if local_ref_path != None and use_local:
+            print("Using local reference data")
             try:
                 self.local_ref = load_yaml(local_ref_path)
             except Exception as e:
                 raise ConfigurationError("Unable to load a yaml file from the provided path '{}'."
                                          .format(local_ref_path)) from e
         else:
+            print("Using http reference data")
             self.local_ref = {}
 
         # For caching things
